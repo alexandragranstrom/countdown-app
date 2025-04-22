@@ -3,6 +3,7 @@ import {
   ElementRef,
   AfterViewInit,
   HostListener,
+  Input,
 } from '@angular/core'
 
 @Directive({
@@ -10,6 +11,12 @@ import {
   standalone: true,
 })
 export class FitTextDirective implements AfterViewInit {
+  @Input() set text(value: string) {
+    if (value !== undefined) {
+      this.updateFontSize(value)
+    }
+  }
+
   public el: HTMLElement
   private readonly paddingBuffer = 48
 
@@ -18,56 +25,52 @@ export class FitTextDirective implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.fitText()
+    this.updateFontSize(this.el.innerText)
   }
 
   @HostListener('window:resize')
   onResize() {
-    this.fitText()
+    this.updateFontSize(this.el.innerText)
   }
 
-  public fitText(): void {
+  private updateFontSize(text: string): string {
     const fullWidth = this.el.parentElement?.offsetWidth || window.innerWidth
     const parentWidth = fullWidth - this.paddingBuffer
     let fontSize = 10
-    this.el.style.whiteSpace = 'nowrap'
 
-    while (fontSize < 300) {
-      this.el.style.fontSize = `${fontSize}px`
-      const { width } = this.el.getBoundingClientRect()
-      if (width > parentWidth) {
-        fontSize--
+    if (text !== this.el.innerText) {
+      const clone = this.el.cloneNode(true) as HTMLElement
+      clone.style.visibility = 'hidden'
+      clone.style.position = 'absolute'
+      clone.style.whiteSpace = 'nowrap'
+      clone.innerText = text
+      document.body.appendChild(clone)
+
+      while (fontSize < 300) {
+        clone.style.fontSize = `${fontSize}px`
+        const { width } = clone.getBoundingClientRect()
+        if (width > parentWidth) {
+          fontSize--
+          break
+        }
+        fontSize++
+      }
+
+      document.body.removeChild(clone)
+    } else {
+      this.el.style.whiteSpace = 'nowrap'
+      while (fontSize < 300) {
         this.el.style.fontSize = `${fontSize}px`
-        break
+        const { width } = this.el.getBoundingClientRect()
+        if (width > parentWidth) {
+          fontSize--
+          break
+        }
+        fontSize++
       }
-      fontSize++
-    }
-  }
-
-  public calculateFontSize(text: string): string {
-    const clone = this.el.cloneNode(true) as HTMLElement
-    clone.style.visibility = 'hidden'
-    clone.style.position = 'absolute'
-    clone.style.whiteSpace = 'nowrap'
-    clone.innerText = text
-
-    document.body.appendChild(clone)
-
-    let fontSize = 10
-    const fullWidth = this.el.parentElement?.offsetWidth || window.innerWidth
-    const parentWidth = fullWidth - this.paddingBuffer
-
-    while (fontSize < 300) {
-      clone.style.fontSize = `${fontSize}px`
-      const { width } = clone.getBoundingClientRect()
-      if (width > parentWidth) {
-        fontSize--
-        break
-      }
-      fontSize++
     }
 
-    document.body.removeChild(clone)
+    this.el.style.fontSize = `${fontSize}px`
     return `${fontSize}px`
   }
 }

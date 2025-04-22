@@ -1,17 +1,16 @@
 <div class="container">
-
-    <h1 class="event-title" fitText #titleRef>Time to {{ eventTitle }}</h1>
-    <div class="countdown-text" fitText #countdownRef>{{ countdown }}</div>
+    <h1 class="event-title" fitText [text]="'Time to ' + eventTitle">Time to {{ eventTitle }}</h1>
+    <div class="countdown-text" fitText [text]="countdown">{{ countdown }}</div>
 
   <form class="form">
     <fieldset class="form-field">
       <legend>Title</legend>
       <input
         type="text"
-        [(ngModel)]="eventTitle"
+        [ngModel]="eventTitle"
+        (ngModelChange)="onTitleChange($event)"
         name="eventTitle"
         placeholder="Enter event title"
-        (ngModelChange)="recalculateText()"
       />
     </fieldset>
 
@@ -19,9 +18,9 @@
       <legend>Date</legend>
       <input
         type="date"
-        [(ngModel)]="eventDateString"
+        [ngModel]="eventDateString"
+        (ngModelChange)="onDateChange($event)"
         name="eventDate"
-        (ngModelChange)="recalculateText()"
       />
     </fieldset>
   </form>

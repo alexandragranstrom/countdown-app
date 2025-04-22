@@ -1,19 +1,12 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
-} from '@angular/core'
-import { RouterOutlet } from '@angular/router'
+import { Component, OnInit, OnDestroy } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { FitTextDirective } from './directives/fit-text.directive'
+import { CountdownService } from './services/countdown.service'
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FormsModule, FitTextDirective],
+  imports: [FormsModule, FitTextDirective],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -21,63 +14,25 @@ export class AppComponent implements OnInit, OnDestroy {
   eventTitle = ''
   eventDateString = ''
   countdown = ''
-  private intervalId?: ReturnType<typeof setInterval>
 
-  @ViewChild('titleRef', { static: false, read: FitTextDirective })
-  titleRef?: FitTextDirective
-  @ViewChild('countdownRef', { static: false, read: FitTextDirective })
-  countdownRef?: FitTextDirective
+  constructor(private countdownService: CountdownService) {}
 
   ngOnInit(): void {
-    this.startCountdown()
-    this.recalculateText()
+    this.countdownService.countdown$.subscribe(
+      (countdown) => (this.countdown = countdown),
+    )
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.intervalId)
+    this.countdownService.stop()
   }
 
-  private startCountdown() {
-    this.intervalId = setInterval(() => {
-      if (!this.eventDateString) {
-        this.countdown = ''
-        return
-      }
-
-      const now = new Date()
-      const eventDate = new Date(this.eventDateString)
-
-      if (isNaN(eventDate.getTime())) {
-        this.countdown = ''
-        return
-      }
-
-      const diff = eventDate.getTime() - now.getTime()
-      let newCountdown = ''
-
-      if (diff <= 0) {
-        newCountdown = 'Event has passed 🎉'
-      } else {
-        const seconds = Math.floor(diff / 1000) % 60
-        const minutes = Math.floor(diff / (1000 * 60)) % 60
-        const hours = Math.floor(diff / (1000 * 60 * 60)) % 24
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-
-        newCountdown = `${days} days, ${hours} h, ${minutes}m, ${seconds}s`
-      }
-
-      const fontSize = this.countdownRef?.calculateFontSize(newCountdown)
-
-      if (fontSize && this.countdownRef) {
-        this.countdownRef.el.style.fontSize = fontSize
-      }
-
-      this.countdown = newCountdown
-    }, 1000)
+  onTitleChange(newTitle: string) {
+    this.eventTitle = newTitle
   }
 
-  recalculateText() {
-    this.titleRef?.fitText()
-    this.countdownRef?.fitText()
+  onDateChange(date: string) {
+    this.eventDateString = date
+    this.countdownService.setTargetDate(date)
   }
 }
