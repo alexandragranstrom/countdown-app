@@ -18,8 +18,8 @@ import { FitTextDirective } from './directives/fit-text.directive'
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  eventTitle = 'Midsummer Eve'
-  eventDateString = '2024-06-21'
+  eventTitle = ''
+  eventDateString = ''
   countdown = ''
   private intervalId?: ReturnType<typeof setInterval>
 
@@ -39,22 +39,40 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private startCountdown() {
     this.intervalId = setInterval(() => {
+      if (!this.eventDateString) {
+        this.countdown = ''
+        return
+      }
+
       const now = new Date()
       const eventDate = new Date(this.eventDateString)
+
+      if (isNaN(eventDate.getTime())) {
+        this.countdown = ''
+        return
+      }
+
       const diff = eventDate.getTime() - now.getTime()
+      let newCountdown = ''
 
       if (diff <= 0) {
-        this.countdown = 'Event has passed 🎉'
+        newCountdown = 'Event has passed 🎉'
       } else {
         const seconds = Math.floor(diff / 1000) % 60
         const minutes = Math.floor(diff / (1000 * 60)) % 60
         const hours = Math.floor(diff / (1000 * 60 * 60)) % 24
         const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
-        this.countdown = `${days} days, ${hours} h, ${minutes}m, ${seconds}s`
+        newCountdown = `${days} days, ${hours} h, ${minutes}m, ${seconds}s`
       }
 
-      this.recalculateText()
+      const fontSize = this.countdownRef?.calculateFontSize(newCountdown)
+
+      if (fontSize && this.countdownRef) {
+        this.countdownRef.el.style.fontSize = fontSize
+      }
+
+      this.countdown = newCountdown
     }, 1000)
   }
 

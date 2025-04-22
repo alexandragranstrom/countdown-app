@@ -10,7 +10,8 @@ import {
   standalone: true,
 })
 export class FitTextDirective implements AfterViewInit {
-  private el: HTMLElement
+  public el: HTMLElement
+  private readonly paddingBuffer = 48
 
   constructor(private elementRef: ElementRef) {
     this.el = this.elementRef.nativeElement
@@ -26,7 +27,8 @@ export class FitTextDirective implements AfterViewInit {
   }
 
   public fitText(): void {
-    const parentWidth = this.el.parentElement?.offsetWidth || window.innerWidth
+    const fullWidth = this.el.parentElement?.offsetWidth || window.innerWidth
+    const parentWidth = fullWidth - this.paddingBuffer
     let fontSize = 10
     this.el.style.whiteSpace = 'nowrap'
 
@@ -40,5 +42,32 @@ export class FitTextDirective implements AfterViewInit {
       }
       fontSize++
     }
+  }
+
+  public calculateFontSize(text: string): string {
+    const clone = this.el.cloneNode(true) as HTMLElement
+    clone.style.visibility = 'hidden'
+    clone.style.position = 'absolute'
+    clone.style.whiteSpace = 'nowrap'
+    clone.innerText = text
+
+    document.body.appendChild(clone)
+
+    let fontSize = 10
+    const fullWidth = this.el.parentElement?.offsetWidth || window.innerWidth
+    const parentWidth = fullWidth - this.paddingBuffer
+
+    while (fontSize < 300) {
+      clone.style.fontSize = `${fontSize}px`
+      const { width } = clone.getBoundingClientRect()
+      if (width > parentWidth) {
+        fontSize--
+        break
+      }
+      fontSize++
+    }
+
+    document.body.removeChild(clone)
+    return `${fontSize}px`
   }
 }
