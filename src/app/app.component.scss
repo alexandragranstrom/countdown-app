@@ -22,7 +22,7 @@
     font-family: 'Open Sauce One', sans-serif;
     font-weight: 400;
     line-height: 1.5;
-    margin-bottom: 2rem;
+    margin-bottom: 10rem;
     white-space: nowrap;
   }
 
@@ -71,6 +71,9 @@
   
   
   @media screen and (min-width: 700px) {
+    .countdown-text {
+      margin-bottom: 2rem;
+    }
     .form {
       flex-direction: row;
       gap: 2rem;
