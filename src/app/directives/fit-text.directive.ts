@@ -19,6 +19,7 @@ export class FitTextDirective implements AfterViewInit {
 
   public el: HTMLElement
   private readonly paddingBuffer = 48
+  private readonly containerHeightRatio = 0.4 // Maximum 40% of container height
 
   constructor(private elementRef: ElementRef) {
     this.el = this.elementRef.nativeElement
@@ -35,7 +36,11 @@ export class FitTextDirective implements AfterViewInit {
 
   private updateFontSize(text: string): string {
     const fullWidth = this.el.parentElement?.offsetWidth || window.innerWidth
+    const containerHeight =
+      this.el.parentElement?.offsetHeight || window.innerHeight
     const parentWidth = fullWidth - this.paddingBuffer
+    const maxHeight = containerHeight * this.containerHeightRatio
+
     let fontSize = 10
 
     if (text !== this.el.innerText) {
@@ -44,12 +49,13 @@ export class FitTextDirective implements AfterViewInit {
       clone.style.position = 'absolute'
       clone.style.whiteSpace = 'nowrap'
       clone.innerText = text
+
       document.body.appendChild(clone)
 
       while (fontSize < 300) {
         clone.style.fontSize = `${fontSize}px`
-        const { width } = clone.getBoundingClientRect()
-        if (width > parentWidth) {
+        const { width, height } = clone.getBoundingClientRect()
+        if (width > parentWidth || height > maxHeight) {
           fontSize--
           break
         }
@@ -61,8 +67,8 @@ export class FitTextDirective implements AfterViewInit {
       this.el.style.whiteSpace = 'nowrap'
       while (fontSize < 300) {
         this.el.style.fontSize = `${fontSize}px`
-        const { width } = this.el.getBoundingClientRect()
-        if (width > parentWidth) {
+        const { width, height } = this.el.getBoundingClientRect()
+        if (width > parentWidth || height > maxHeight) {
           fontSize--
           break
         }
