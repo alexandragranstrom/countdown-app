@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { FitTextDirective } from './directives/fit-text.directive'
 import { CountdownService } from './services/countdown.service'
+import { RouterModule } from '@angular/router'
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, FitTextDirective],
+  imports: [FormsModule, FitTextDirective, RouterModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

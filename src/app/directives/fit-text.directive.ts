@@ -19,7 +19,7 @@ export class FitTextDirective implements AfterViewInit {
 
   public el: HTMLElement
   private readonly paddingBuffer = 48
-  private readonly containerHeightRatio = 0.4 // Maximum 40% of container height
+  private readonly containerHeightRatio = 0.4
 
   constructor(private elementRef: ElementRef) {
     this.el = this.elementRef.nativeElement
@@ -35,48 +35,42 @@ export class FitTextDirective implements AfterViewInit {
   }
 
   private updateFontSize(text: string): string {
-    const fullWidth = this.el.parentElement?.offsetWidth || window.innerWidth
-    const containerHeight =
-      this.el.parentElement?.offsetHeight || window.innerHeight
+    const container = this.el.parentElement
+    if (!container) return ''
+
+    const fullWidth = container.offsetWidth
+    const containerHeight = container.offsetHeight
     const parentWidth = fullWidth - this.paddingBuffer
     const maxHeight = containerHeight * this.containerHeightRatio
 
-    let fontSize = 10
+    const testElement = this.el.cloneNode(true) as HTMLElement
+    testElement.style.visibility = 'hidden'
+    testElement.style.position = 'absolute'
+    testElement.style.whiteSpace = 'nowrap'
+    testElement.innerText = text
+    document.body.appendChild(testElement)
 
-    if (text !== this.el.innerText) {
-      const clone = this.el.cloneNode(true) as HTMLElement
-      clone.style.visibility = 'hidden'
-      clone.style.position = 'absolute'
-      clone.style.whiteSpace = 'nowrap'
-      clone.innerText = text
+    let min = 8
+    let max = 300
+    let bestSize = min
 
-      document.body.appendChild(clone)
+    while (min <= max) {
+      const mid = Math.floor((min + max) / 2)
+      testElement.style.fontSize = `${mid}px`
 
-      while (fontSize < 300) {
-        clone.style.fontSize = `${fontSize}px`
-        const { width, height } = clone.getBoundingClientRect()
-        if (width > parentWidth || height > maxHeight) {
-          fontSize--
-          break
-        }
-        fontSize++
-      }
+      const { width, height } = testElement.getBoundingClientRect()
+      const fits = width <= parentWidth && height <= maxHeight
 
-      document.body.removeChild(clone)
-    } else {
-      this.el.style.whiteSpace = 'nowrap'
-      while (fontSize < 300) {
-        this.el.style.fontSize = `${fontSize}px`
-        const { width, height } = this.el.getBoundingClientRect()
-        if (width > parentWidth || height > maxHeight) {
-          fontSize--
-          break
-        }
-        fontSize++
+      if (fits) {
+        bestSize = mid
+        min = mid + 1
+      } else {
+        max = mid - 1
       }
     }
 
-    this.el.style.fontSize = `${fontSize}px`
-    return `${fontSize}px`
+    document.body.removeChild(testElement)
+    this.el.style.fontSize = `${bestSize}px`
+    return `${bestSize}px`
   }
 }

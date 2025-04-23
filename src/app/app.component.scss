@@ -27,14 +27,14 @@
   white-space: nowrap;
 
   @media (orientation: landscape) {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 3rem;
   width: 100%;
   max-width: 300px;
   text-align: left;
