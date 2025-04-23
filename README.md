@@ -97,7 +97,7 @@ The application supports all modern browsers including:
 
 ## Deployment
 
-The application is deployed at: [your-deployment-url]
+The application is deployed at: https://nccountdownapp.netlify.app
 
 ## Future Improvements
 
