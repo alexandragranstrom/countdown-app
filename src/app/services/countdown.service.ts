@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs'
 })
 export class CountdownService {
   private intervalId?: ReturnType<typeof setInterval>
-  private targetDate = ''
+  private selectedDate = ''
   private countdownSubject = new BehaviorSubject<string>('')
 
   countdown$ = this.countdownSubject.asObservable()
@@ -14,7 +14,7 @@ export class CountdownService {
   constructor() {}
 
   setTargetDate(date: string) {
-    this.targetDate = date
+    this.selectedDate = date
     this.startCountdown()
   }
 
@@ -28,13 +28,13 @@ export class CountdownService {
     this.stop()
 
     this.intervalId = setInterval(() => {
-      if (!this.targetDate) {
+      if (!this.selectedDate) {
         this.countdownSubject.next('')
         return
       }
 
       const now = new Date()
-      const eventDate = new Date(this.targetDate)
+      const eventDate = new Date(this.selectedDate)
 
       if (isNaN(eventDate.getTime())) {
         this.countdownSubject.next('')
