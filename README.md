@@ -101,7 +101,7 @@ The application is deployed at: https://nccountdownapp.netlify.app
 
 ## Future Improvements
 
-This being my first Angular project and in regards to the time limit (had a busy week at work with a lot of overtime), I am happy with how the app turned out. But a few improvements I would prioritize before considering this app production-ready:
+This being my first Angular project and in regards to the time limit, I am happy with how the app turned out. But a few improvements I would prioritize before considering this app production-ready:
 
 ### 1. Code Structure and Best Practices
 
@@ -117,7 +117,7 @@ To make sure everything works as expected, I'd add automated end-to-end tests us
 
 ### 4. FitText Optimization
 
-The text resizing works well, but it could be smoother. Right now, the font size adjusts to fill the screen width, but it can feel a bit "jumpy" when resizing the window. This could be improved by waiting a short moment before recalculating the size (debouncing), and using smoother rendering with requestAnimationFrame – found this when looking into other solutions in Angular and believe this could provide a smoother user experience.
+The text resizing works well, but it could be smoother. Right now, the font size adjusts to fill the screen width, but it can feel a bit "jumpy" when resizing the window and when loading the page (getting the local storage). This could be improved by waiting a short moment before recalculating the size (debouncing), and using smoother rendering with requestAnimationFrame – found this when looking into other solutions in Angular and believe this could provide a smoother user experience.
 
 While these are the key improvements I would prioritize, there are several other areas that could enhance the application:
 
