@@ -22,6 +22,12 @@ export class AppComponent implements OnInit, OnDestroy {
     this.countdownService.countdown$.subscribe(
       (countdown) => (this.countdown = countdown),
     )
+    this.countdownService.eventTitle$.subscribe(
+      (title) => (this.eventTitle = title),
+    )
+    this.countdownService.targetDate$.subscribe(
+      (date) => (this.eventDateString = date),
+    )
   }
 
   ngOnDestroy(): void {
@@ -29,11 +35,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onTitleChange(newTitle: string) {
-    this.eventTitle = newTitle
+    this.countdownService.setEventTitle(newTitle)
   }
 
   onDateChange(date: string) {
-    this.eventDateString = date
     this.countdownService.setTargetDate(date)
   }
 }

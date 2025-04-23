@@ -1,14 +1,12 @@
 # Countdown App
 
-A modern, responsive countdown application built with Angular that allows users to create and track upcoming events. The app features dynamic text sizing that adjusts to fill the screen width while maintaining readability in both portrait and landscape modes.
+A responsive countdown application built with Angular that allows users to create and track upcoming events. The app features dynamic text sizing that adjusts to fill the screen width while maintaining readability in both portrait and landscape modes.
 
 ## Features
 
 - Event countdown with days, hours, minutes, and seconds
 - Responsive design that works in both portrait and landscape modes
 - Dynamic text sizing that fills the screen width
-- Persistent storage of event details between page reloads
-- Clean, modern UI following Figma design specifications
 
 ## Prerequisites
 
@@ -62,7 +60,7 @@ npm test
 ## Key Components
 
 - **FitTextDirective**: Handles dynamic text sizing
-- **CountdownService**: Manages countdown logic and state
+- **CountdownService**: Manages countdown logic and state, as well as handling the storage key (saving and loading saved data)
 - **AppComponent**: Main application component
 
 ## Code Formatting
@@ -103,7 +101,7 @@ The application is deployed at: [your-deployment-url]
 
 ## Future Improvements
 
-This being my first Angular project and in regards to the time limit (had a busy week at work with a lot of overtime), I am happy with how the app turned out. But a few improvements I would prioritise before considering this app production-ready:
+This being my first Angular project and in regards to the time limit (had a busy week at work with a lot of overtime), I am happy with how the app turned out. But a few improvements I would prioritize before considering this app production-ready:
 
 ### 1. Code Structure and Best Practices
 
@@ -111,7 +109,7 @@ Given more time, I would dive deeper into Angular's recommended architecture pat
 
 ### 2. Data Persistence
 
-Right now, the event name and end date are not saved between page reloads—they're reset on refresh. A next step would be to store this information in the browser's localStorage, but since my number one option would be to set up a more permanent backend database, I decided to leave this for this assignment. This would make the app useful and reliable, especially if accessed across sessions or devices.
+The event name and end date are now saved in the browser's localStorage using a unique storage key, allowing the countdown to persist between page reloads. This implementation uses the `CountdownService` to manage the storage and retrieval of the countdown data. While this provides basic persistence, a future improvement could be to implement a more permanent backend database solution for cross-device synchronization and enhanced data management.
 
 ### 3. Testing (Especially End-to-End)
 
@@ -121,13 +119,11 @@ To make sure everything works as expected, I'd add automated end-to-end tests us
 
 The text resizing works well, but it could be smoother. Right now, the font size adjusts to fill the screen width, but it can feel a bit "jumpy" when resizing the window. This could be improved by waiting a short moment before recalculating the size (debouncing), and using smoother rendering with requestAnimationFrame – found this when looking into other solutions in Angular and believe this could provide a smoother user experience.
 
-### Additional Considerations
+While these are the key improvements I would prioritize, there are several other areas that could enhance the application:
 
-These are just my top things I would prioritize for this assignment, but there are so many other things I could do, for example:
+- Accessibility improvements (ARIA labels, keyboard navigation)
+- UI/UX polish and animations
+- CI/CD pipeline implementation
+- Comprehensive error handling and user feedback
 
-- Accessibility
-- UI polish
-- Setting up a CI/CD pipeline
-- Error handling
-
-The list is long, but as I was a bit short on time this week, I felt this would be a good start.
+Given more time, I would work on these improvements to make the app more robust and user-friendly.
